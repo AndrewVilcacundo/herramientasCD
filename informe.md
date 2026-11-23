@@ -1,6 +1,6 @@
 # INFORME TÉCNICO DE INVESTIGACIÓN: ANSIBLE EN PIPELINES DE ENTREGA CONTINUA (CD)
 
-**Asignatura:** Integración de Sistemas  
+**Asignatura:** Procesos de Software
 **Actividad:** Configuración de un pipeline de entrega continua (Herramientas CD) – 10% P1  
 **Estudiantes:** Andrew Vilcacundo & Galindo  
 **Fecha:** Noviembre 2026  
