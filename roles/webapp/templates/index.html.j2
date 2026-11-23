@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} - Despliegue con Ansible</title>
+    <style>
+        :root {
+            --redhat-red: #EE0000;
+            --ansible-black: #000000;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            border-top: 6px solid var(--redhat-red);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 20px;
+        }
+        .badge {
+            background-color: var(--accent-green);
+            color: #000;
+            font-weight: bold;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .card {
+            background-color: #0f172a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+        .card-title {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .card-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .code-block {
+            background-color: #0b1120;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            border-left: 4px solid var(--accent-cyan);
+            margin-top: 20px;
+        }
+        footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <span class="badge">Pipeline CD Activo</span>
+                <h1 style="margin-top:10px;">Despliegue Continuo con Ansible</h1>
+                <p class="subtitle">{{ subject }}</p>
+            </div>
+        </div>
+
+        <p>Esta aplicación web estática ha sido aprovisionada, configurada y desplegada de manera 100% automatizada e idempotente a través de un <strong>Ansible Playbook</strong> ejecutado en un entorno de integración y entrega continua (CI/CD).</p>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">Equipo de Trabajo</div>
+                <div class="card-value">{{ maintainer }}</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Versión Desplegada</div>
+                <div class="card-value">{{ app_version }}</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Ambiente</div>
+                <div class="card-value" style="color: var(--accent-green);">{{ app_env | upper }}</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Puerto de Servicio</div>
+                <div class="card-value">:{{ app_port }} &rarr; :{{ container_port }}</div>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <strong>Arquitectura CD verificada:</strong><br>
+            [Git Push] &rarr; [Ansible Controller] &rarr; [Role: webapp] &rarr; [community.docker] &rarr; [Container Running]
+        </div>
+
+        <footer>
+            Integración de Sistemas &bull; Grupo del Sábado &bull; Demostración Práctica CD
+        </footer>
+    </div>
+</body>
+</html>

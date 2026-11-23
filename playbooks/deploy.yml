@@ -1,0 +1,31 @@
+---
+# Playbook Principal de Entrega Continua (Continuous Delivery) con Ansible
+# Asignatura: Integración de Sistemas - 10% P1
+# Expositores: Andrew Vilcacundo & Galindo
+
+- name: Pipeline CD - Despliegue Automatizado de Aplicación Web en Contenedores
+  hosts: webservers
+  gather_facts: true
+
+  pre_tasks:
+    - name: Inicio del Pipeline de Despliegue
+      ansible.builtin.debug:
+        msg:
+          - "=========================================================="
+          - "  INICIANDO PIPELINE DE ENTREGA CONTINUA (CD) CON ANSIBLE  "
+          - "  Objetivo: Despliegue de {{ app_name }} ({{ app_version }}) "
+          - "  Ejecutado por: {{ maintainer }}                         "
+          - "=========================================================="
+
+  roles:
+    - role: webapp
+
+  post_tasks:
+    - name: Resumen final de entrega
+      ansible.builtin.debug:
+        msg:
+          - "=========================================================="
+          - "  PIPELINE CD FINALIZADO EXITOSAMENTE                      "
+          - "  La aplicación web está disponible en:                   "
+          - "  http://localhost:{{ app_port }}                         "
+          - "=========================================================="

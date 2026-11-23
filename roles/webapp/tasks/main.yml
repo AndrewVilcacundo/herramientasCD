@@ -1,0 +1,71 @@
+---
+# Tareas del Rol 'webapp' para aprovisionamiento y despliegue continuo
+
+- name: Verificar conectividad con el daemon de Docker
+  community.docker.docker_host_info:
+  register: docker_info
+  ignore_errors: false
+
+- name: Mostrar informacion del nodo Docker
+  ansible.builtin.debug:
+    msg: "Conectado exitosamente al daemon de Docker versión {{ docker_info.host_info.ServerVersion }}"
+
+- name: Crear directorio de publicacion web local
+  ansible.builtin.file:
+    path: "{{ container_web_root }}"
+    state: directory
+    mode: '0755'
+
+- name: Renderizar plantilla HTML de la aplicacion (Jinja2)
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: "{{ container_web_root }}/index.html"
+    mode: '0644'
+  register: template_result
+
+- name: Descargar imagen de servidor web ligero (Nginx Alpine)
+  community.docker.docker_image:
+    name: "nginx:alpine"
+    source: pull
+    state: present
+
+- name: Desplegar y asegurar ejecucion del contenedor web
+  community.docker.docker_container:
+    name: "{{ app_name }}"
+    image: "nginx:alpine"
+    state: started
+    restart_policy: always
+    published_ports:
+      - "{{ app_port }}:{{ container_port }}"
+    labels:
+      project: "ansible-cd-demo"
+      maintainer: "{{ maintainer }}"
+      version: "{{ app_version }}"
+  register: container_result
+
+- name: Desplegar artefacto web en el contenedor
+  ansible.builtin.command: >
+    docker cp {{ container_web_root }}/index.html {{ app_name }}:/usr/share/nginx/html/index.html
+  when: template_result.changed or container_result.changed
+
+- name: Verificar estado y propiedades del despliegue
+  ansible.builtin.debug:
+    msg:
+      - "Estado del Contenedor: {{ container_result.container.State.Status }}"
+      - "IP/Host: localhost:{{ app_port }}"
+      - "Idempotencia: {{ 'Sin cambios requeridos (Ya estaba corriendo)' if not container_result.changed else 'Despliegue/Actualizacion efectuada con exito' }}"
+
+- name: Probar disponibilidad del servicio web mediante contenedor curl
+  ansible.builtin.command: >
+    docker run --rm --network host curlimages/curl:8.10.1
+    -s -o /dev/null -w "%{http_code}" http://localhost:{{ app_port }}
+  register: curl_check
+  changed_when: false
+  retries: 5
+  delay: 2
+  until: curl_check.stdout == "200"
+  ignore_errors: true
+
+- name: Reportar resultado del Healthcheck
+  ansible.builtin.debug:
+    msg: "Healthcheck HTTP: Código {{ curl_check.stdout | default('N/A') }} - Aplicación en línea y respondiendo exitosamente en http://localhost:{{ app_port }}"

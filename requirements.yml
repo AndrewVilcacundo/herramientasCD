@@ -1,0 +1,5 @@
+---
+# Colecciones requeridas para la integración de Ansible con Docker
+collections:
+  - name: community.docker
+    version: ">=3.10.0"

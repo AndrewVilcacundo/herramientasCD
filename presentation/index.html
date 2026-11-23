@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ansible: Automatización y CD - Presentación Universitaria</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-red: #ee0000;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --text-main: #c9d1d9;
+            --text-bright: #ffffff;
+            --border-color: #30363d;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .slide-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--accent-red);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 950px;
+            min-height: 580px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .slide-title {
+            font-size: 1.8rem;
+            color: var(--text-bright);
+            font-weight: 700;
+        }
+        .slide-badge {
+            background-color: rgba(238, 0, 0, 0.15);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .slide-body {
+            flex-grow: 1;
+            font-size: 1.15rem;
+            line-height: 1.6;
+        }
+        .slide-body ul {
+            margin-left: 25px;
+            margin-top: 15px;
+        }
+        .slide-body li {
+            margin-bottom: 12px;
+        }
+        .notes-box {
+            background-color: #0b0e14;
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #8b949e;
+        }
+        .notes-box strong {
+            color: var(--accent-blue);
+        }
+        .code-snippet {
+            background-color: #090d13;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #79c0ff;
+            margin-top: 15px;
+            white-space: pre-wrap;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            width: 100%;
+            max-width: 950px;
+        }
+        .btn {
+            background-color: #21262d;
+            border: 1px solid var(--border-color);
+            color: var(--text-bright);
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn:hover:not(:disabled) {
+            background-color: #30363d;
+            border-color: #8b949e;
+        }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .indicator {
+            color: #8b949e;
+            font-weight: 600;
+        }
+        .highlight {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            text-align: left;
+        }
+        th {
+            background-color: #1f242c;
+            color: var(--text-bright);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container" id="slide-container">
+        <!-- Renderizado dinámico vía JavaScript -->
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="prev-btn" onclick="prevSlide()">&#8592; Anterior</button>
+        <span class="indicator" id="slide-indicator">Diapositiva 1 / 15</span>
+        <button class="btn" id="next-btn" onclick="nextSlide()">Siguiente &#8594;</button>
+    </div>
+
+    <script>
+        const slides = [
+            {
+                badge: "Integración de Sistemas - 10% P1",
+                title: "Ansible: Automatización de Infraestructura y Entrega Continua (CD)",
+                content: `
+                    <div style="text-align: center; margin-top: 40px;">
+                        <h2 style="color: var(--accent-red); font-size: 2rem; margin-bottom: 15px;">Pipeline CD con Ansible y Contenedores</h2>
+                        <p style="font-size: 1.3rem; margin-bottom: 25px;">Configuración de un Pipeline de Entrega Continua Idempotente y Declarativo</p>
+                        <div style="background-color: #0b0e14; display: inline-block; padding: 20px 40px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p><strong>Expositores:</strong> Andrew Vilcacundo & Galindo</p>
+                            <p><strong>Grupo:</strong> Grupo del Sábado</p>
+                            <p><strong>Semestre:</strong> Noviembre 2026</p>
+                        </div>
+                    </div>
+                `,
+                notes: "Buenos días profesor y compañeros. Hoy junto a mi compañero Galindo presentaremos Ansible y cómo automatiza de manera elegante la Entrega Continua (CD)."
+            },
+            {
+                badge: "Contexto del Problema",
+                title: "¿Por Qué Surge la Necesidad de Ansible?",
+                content: `
+                    <ul>
+                        <li><strong>La Fragilidad del Despliegue Manual:</strong> Administradores ejecutando comandos por SSH manualmente propensos al error humano.</li>
+                        <li><strong>Configuration Drift (Deriva de Configuración):</strong> Servidores en producción que terminan con versiones dispares y parches no documentados.</li>
+                        <li><strong>El dilema del "En mi máquina sí funciona":</strong> Falta de repetibilidad entre los entornos de Desarrollo, Staging y Producción.</li>
+                        <li><strong>Solución:</strong> <em>Infraestructura como Código (IaC)</em> y <em>Automatización Declarativa</em>.</li>
+                    </ul>
+                `,
+                notes: "Explicar cómo antes se dependía de notas en bloc de notas o comandos tipeados en vivo, lo cual causaba caídas graves al pasar a producción."
+            },
+            {
+                badge: "Fundamentos",
+                title: "¿Qué es Ansible y Cuál es su Propósito?",
+                content: `
+                    <ul>
+                        <li>Motor de automatización de TI de código abierto patrocinado por <strong>Red Hat</strong>.</li>
+                        <li><strong>Pilares de Diseño:</strong>
+                            <ul>
+                                <li><span class="highlight">Agentless (Sin Agente):</span> No instala software demonio en los nodos gestionados.</li>
+                                <li><span class="highlight">Sintaxis YAML:</span> Fácil de leer y mantener tanto por programadores como por SysAdmins.</li>
+                                <li><span class="highlight">Enfoque Declarativo:</span> Se define el <em>estado deseado</em>, no los pasos de bajo nivel.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `,
+                notes: "Destacar que no requiere puertos especiales ni agentes instalados en los servidores finales, solo SSH y Python."
+            },
+            {
+                badge: "Arquitectura",
+                title: "Arquitectura Agentless y Conectividad",
+                content: `
+                    <div class="code-snippet">
+[Control Node (Linux / WSL / Docker)]
+       │
+       │   SSH (Linux) / WinRM (Windows) / Docker API
+       ├──> [Nodo Gestionado 1: Servidor Web Ubuntu]
+       ├──> [Nodo Gestionado 2: Base de Datos RHEL]
+       └──> [Nodo Gestionado 3: Contenedor Docker Local]
+                    </div>
+                    <ul>
+                        <li><strong>Control Node:</strong> Máquina donde se ejecuta Ansible (requiere entorno tipo Unix/Python).</li>
+                        <li><strong>Managed Nodes:</strong> Servidores o instancias administradas sin agentes residentes.</li>
+                    </ul>
+                `,
+                notes: "Hacer hincapié en que Windows no es Control Node nativo, por eso usamos un Contenedor o WSL2 como entorno de ejecución."
+            },
+            {
+                badge: "Componentes",
+                title: "Componentes Principales de Ansible",
+                content: `
+                    <ul>
+                        <li><strong>Inventario (hosts.ini):</strong> Lista los servidores objetivo, agrupaciones y variables.</li>
+                        <li><strong>Playbooks (YAML):</strong> Documentos que orquestan las políticas y pasos a ejecutar.</li>
+                        <li><strong>Plays y Tasks:</strong> Un Play asigna un grupo de hosts; una Task ejecuta un módulo específico.</li>
+                        <li><strong>Modules (Módulos):</strong> Programas atómicos (ej. <code>apt</code>, <code>docker_container</code>, <code>template</code>).</li>
+                        <li><strong>Roles y Collections:</strong> Estructuras modulares para empaquetar y compartir código en Ansible Galaxy.</li>
+                    </ul>
+                `,
+                notes: "Mencionar que las colecciones como community.docker permiten interactuar directamente con la API de Docker."
+            },
+            {
+                badge: "Mecanismo Clave",
+                title: "Flujo de Trabajo e Idempotencia",
+                content: `
+                    <ul>
+                        <li><strong>1. Parsing:</strong> Carga de inventario, roles y variables.</li>
+                        <li><strong>2. Fact Gathering:</strong> Descubre el estado del hardware y SO del objetivo automáticamente.</li>
+                        <li><strong>3. Idempotencia Radical:</strong>
+                            <div class="code-snippet" style="color: #58a6ff;">
+Ejecución Inicial:    changed=2  (Aplica configuraciones)
+Segunda Ejecución:    changed=0  (Detecta estado perfecto, sin cambios)
+                            </div>
+                        </li>
+                        <li><strong>4. Handlers:</strong> Reacciona reiniciando servicios solo cuando ocurren cambios reales.</li>
+                    </ul>
+                `,
+                notes: "La idempotencia es vital: si el contenedor ya existe y está corriendo idéntico a la especificación, Ansible no lo reinicia innecesariamente."
+            },
+            {
+                badge: "Evaluación Técnica",
+                title: "Ventajas y Desventajas de Ansible",
+                content: `
+                    <table>
+                        <tr><th>Ventajas Clave</th><th>Desventajas / Retos</th></tr>
+                        <tr>
+                            <td>✅ Cero agentes residentes (Agentless)<br>✅ YAML intuitivo y rápido de aprender<br>✅ Ecosistema oficial de Red Hat</td>
+                            <td>❌ Control Node requiere Linux/WSL2<br>❌ SSH puede generar latencia en más de 20.000 nodos simultáneos</td>
+                        </tr>
+                    </table>
+                `,
+                notes: "Ser objetivos: Ansible es perfecto para CD y servidores empresariales, pero requiere planificar la concurrencia en redes gigantescas."
+            },
+            {
+                badge: "Comparativa de Mercado",
+                title: "Ansible vs. Terraform, Puppet y Chef",
+                content: `
+                    <table>
+                        <tr><th>Herramienta</th><th>Propósito</th><th>Agente</th><th>Lenguaje</th></tr>
+                        <tr><td><strong>Ansible</strong></td><td>Configuración & CD</td><td>No (Agentless)</td><td>YAML</td></tr>
+                        <tr><td><strong>Terraform</strong></td><td>Aprovisionamiento Infra</td><td>No (Cloud API)</td><td>HCL</td></tr>
+                        <tr><td><strong>Puppet</strong></td><td>Configuración continua</td><td>Sí (Puppet Agent)</td><td>Puppet DSL</td></tr>
+                        <tr><td><strong>Chef</strong></td><td>Configuración avanzada</td><td>Sí (Chef Client)</td><td>Ruby DSL</td></tr>
+                    </table>
+                `,
+                notes: "Recordar la analogía: Terraform crea la casa (infraestructura nube) y Ansible la amuebla y despliega la aplicación."
+            },
+            {
+                badge: "Ecosistema DevOps",
+                title: "Integración con Git, Docker y Kubernetes",
+                content: `
+                    <ul>
+                        <li><strong>Git & GitHub (GitOps):</strong> Todo el código de infraestructura versionado; despliegues activados por Pull Requests.</li>
+                        <li><strong>Docker (community.docker):</strong>
+                            <ul>
+                                <li>Control declarativo de contenedores, redes y volúmenes.</li>
+                                <li>Reemplaza comandos bash frágiles de docker run.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Kubernetes (kubernetes.core):</strong> Despliegue de manifiestos y construcción de <em>Ansible Operators</em>.</li>
+                    </ul>
+                `,
+                notes: "Explicar cómo Ansible actúa como pegamento entre el registro de imágenes Docker y los servidores de producción."
+            },
+            {
+                badge: "Entrega Continua",
+                title: "Ansible dentro de un Pipeline CI/CD",
+                content: `
+                    <div class="code-snippet">
+[Desarrollador Git Push] ➔ [GitHub Actions / CI: Tests & Build Docker Image]
+                                       │
+                                       ▼ (Dispara fase CD)
+                          [Ansible Playbook Runner]
+                                       │
+            ┌──────────────────────────┴──────────────────────────┐
+            ▼                                                     ▼
+ [Nodo Staging: Zero Downtime]                         [Nodo Producción]
+ - Actualiza contenedor Docker                         - Healthcheck HTTP (200 OK)
+                    </div>
+                `,
+                notes: "CI construye y testea; Ansible en CD se conecta de forma segura a los servidores y realiza el despliegue con validación de salud."
+            },
+            {
+                badge: "Práctica en Vivo",
+                title: "Demostración Práctica: Entorno Windows 11",
+                content: `
+                    <ul>
+                        <li><strong>Hardware del Estudiante:</strong> ASUS TUF A16 (AMD Ryzen 7, Windows 11).</li>
+                        <li><strong>Reto de Ingeniería Superado:</strong>
+                            <p>Dado que Windows no es Control Node nativo, implementamos un contenedor runner con <code>ansible-core 2.19.15</code> montando el socket de Docker Desktop.</p>
+                        </li>
+                        <li><strong>Estructura del Proyecto:</strong>
+                            <code>inventory/hosts.ini</code> | <code>roles/webapp/</code> | <code>playbooks/deploy.yml</code> | <code>run-playbook.ps1</code>
+                        </li>
+                    </ul>
+                `,
+                notes: "Explicar que la solución con contenedor runner es exactamente igual a como ejecutan Ansible plataformas de CI/CD como GitLab Runner o GitHub Actions."
+            },
+            {
+                badge: "Resultados Empíricos",
+                title: "Resultados de la Ejecución y Verificación",
+                content: `
+                    <ul>
+                        <li>✅ <strong>Conexión con Docker:</strong> Detectó exitosamente Docker Engine v29.5.2.</li>
+                        <li>✅ <strong>Descarga y Configuración:</strong> Imagen <code>nginx:alpine</code> y plantilla Jinja2 personalizada.</li>
+                        <li>✅ <strong>Despliegue del Contenedor:</strong> <code>demo-webapp-ansible</code> activo en <code>:8080</code>.</li>
+                        <li>✅ <strong>Healthcheck Automatizado:</strong> Código HTTP 200 OK verificado.</li>
+                        <li>✅ <strong>Idempotencia Comprobada:</strong> <code>ok=12, changed=0</code> en repetición.</li>
+                    </ul>
+                `,
+                notes: "Mostrar en vivo o con capturas el navegador en http://localhost:8080 y la salida del comando PowerShell."
+            },
+            {
+                badge: "Licenciamiento",
+                title: "Ansible Community vs. Red Hat AAP",
+                content: `
+                    <table>
+                        <tr><th>Característica</th><th>Ansible Community</th><th>Red Hat AAP (Empresarial)</th></tr>
+                        <tr><td><strong>Costo / Licencia</strong></td><td>Gratis (GPLv3)</td><td>Suscripción comercial por nodo</td></tr>
+                        <tr><td><strong>Interfaz</strong></td><td>Línea de Comandos (CLI)</td><td>Automation Controller (UI Web)</td></tr>
+                        <tr><td><strong>Seguridad</strong></td><td>Permisos de SO</td><td>RBAC, LDAP, SSO y SAML</td></tr>
+                        <tr><td><strong>Soporte</strong></td><td>Foros y comunidad</td><td>SLA Empresarial 24/7 Red Hat</td></tr>
+                    </table>
+                `,
+                notes: "Aclarar que en clase usamos la versión Community, pero en grandes bancos o empresas se contrata AAP por la auditoría y la interfaz web."
+            },
+            {
+                badge: "Cierre Académico",
+                title: "Conclusiones",
+                content: `
+                    <ul>
+                        <li><strong>Confiabilidad Operativa:</strong> La automatización declarativa elimina la intervención manual y el error humano.</li>
+                        <li><strong>Estandarización:</strong> Toda la configuración de despliegue queda versionada como código en el repositorio Git.</li>
+                        <li><strong>Complemento Perfecto:</strong> La combinación de Ansible y Docker acelera el ciclo de vida de desarrollo de software moderno.</li>
+                    </ul>
+                `,
+                notes: "Resumir que dominar Ansible es una habilidad fundamental para cualquier ingeniero de software en la era de DevOps y la nube."
+            },
+            {
+                badge: "Bibliografía",
+                title: "Referencias y Fuentes Oficiales",
+                content: `
+                    <ul>
+                        <li><strong>Red Hat Ansible:</strong> <em>Ansible Community Documentation & Architecture Guide</em> (2025).</li>
+                        <li><strong>Geerling, Jeff:</strong> <em>Ansible for DevOps: Server and configuration management for humans</em> (2020).</li>
+                        <li><strong>Docker Inc.:</strong> <em>Docker Engine API and Architecture Reference</em> (2025).</li>
+                        <li><strong>IEEE Software:</strong> <em>Continuous Delivery and Infrastructure as Code Principles</em>.</li>
+                    </ul>
+                    <div style="text-align: center; margin-top: 40px;">
+                        <h3 style="color: var(--accent-green);">¡Muchas gracias por su atención!</h3>
+                        <p style="color: var(--text-bright); margin-top: 10px;">Espacio abierto para preguntas y comentarios</p>
+                    </div>
+                `,
+                notes: "Agradecer formalmente y dar paso a la ronda de preguntas del profesor y compañeros."
+            }
+        ];
+
+        let currentSlide = 0;
+
+        function renderSlide() {
+            const slide = slides[currentSlide];
+            const container = document.getElementById('slide-container');
+            container.innerHTML = `
+                <div>
+                    <div class="slide-header">
+                        <div class="slide-title">${slide.title}</div>
+                        <span class="slide-badge">${slide.badge}</span>
+                    </div>
+                    <div class="slide-body">
+                        ${slide.content}
+                    </div>
+                </div>
+                <div class="notes-box">
+                    <strong>🗣️ Notas para exponer:</strong> ${slide.notes}
+                </div>
+            `;
+            document.getElementById('slide-indicator').innerText = `Diapositiva ${currentSlide + 1} / ${slides.length}`;
+            document.getElementById('prev-btn').disabled = (currentSlide === 0);
+            document.getElementById('next-btn').disabled = (currentSlide === slides.length - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                renderSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                renderSlide();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        renderSlide();
+    </script>
+</body>
+</html>

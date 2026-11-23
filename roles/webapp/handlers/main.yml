@@ -1,0 +1,6 @@
+---
+- name: Reiniciar contenedor de la aplicacion
+  community.docker.docker_container:
+    name: "{{ app_name }}"
+    state: started
+    restart: true
